@@ -30,6 +30,8 @@ use async_tungstenite::tungstenite::Error as TungsteniteError;
 use sodiumoxide::crypto::box_::{PublicKey as SodiumPublicKey, Nonce as SodiumNonce};
 use sodiumoxide::crypto::box_;
 
+use ghostmates_common::{GhostmatesMessage};
+
 use base58::{ToBase58, FromBase58};
 use sha2::{Sha256, Digest, 
     digest::generic_array::GenericArray
@@ -38,36 +40,6 @@ use ripemd160::{Ripemd160};
 use bincode;
 use serde::{Serialize, Deserialize};
 use flurry::HashMap;
-
-#[derive(Serialize, Deserialize, Debug)]
-enum GhostmatesMessage {
-    Identify {
-        ghostmates_address: String,
-        pubkey: SodiumPublicKey,
-    },
-    SuccesfulIdentify,
-    FailedIdentify,
-    SuccesfulLookup {
-        pubkey: SodiumPublicKey,
-        ghostmates_address: String,
-    },
-    FailedLookup {
-        ghostmates_address: String,
-    },
-    Lookup {
-        dest_address: String,
-    },
-    DirectMessage {
-        dest_address: String,
-        encrypted_message: Vec<u8>,
-        nonce: SodiumNonce
-    },
-    IncomingMessage {
-        from_address: String,
-        encrypted_message: Vec<u8>,
-        nonce: SodiumNonce
-    },
-}
 
 async fn handle_connection(raw_stream: TcpStream, addr: SocketAddr, peer_map: Arc<HashMap<String, IPKeyRow>>) -> Result<(), IoError> {
 
